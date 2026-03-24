@@ -39,13 +39,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       }
 
-      // Profile not found — user exists in auth but has no profile row
-      if (!data) {
-        console.warn('No profile found for user:', userId);
-        return null;
+      if (data) return data;
+
+      // Profile missing — attempt to create it from auth user metadata
+      console.warn('No profile found for user:', userId, '— creating from auth metadata');
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const meta = authUser.user_metadata || {};
+        const profileData = {
+          id: userId,
+          name: meta.name || authUser.email?.split('@')[0] || 'User',
+          email: authUser.email || '',
+          role: meta.role || 'student',
+          approval_status: meta.role === 'faculty' ? 'pending' : 'approved',
+        };
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .upsert(profileData)
+          .select()
+          .maybeSingle();
+        if (newProfile) return newProfile;
       }
 
-      return data;
+      return null;
     } catch (err) {
       console.error('Profile fetch exception:', err);
       return null;
@@ -60,14 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (session?.user) {
         const profile = await fetchProfile(session.user.id);
         if (mounted) {
-          if (profile) {
-            setUser(profile);
-          } else {
-            // Stale session with no profile — sign out to clean up
-            console.warn('Stale session detected (no profile). Signing out.');
-            await supabase.auth.signOut();
-            setUser(null);
-          }
+          setUser(profile); // may be null if profile creation also failed
           setLoading(false);
         }
       } else {
@@ -107,7 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         console.error('Sign in error:', error.message, error.status);
         if (error.status === 500) {
@@ -121,6 +130,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         return { error: error.message };
       }
+
+      // Ensure profile exists after successful login
+      if (data.user) {
+        const meta = data.user.user_metadata || {};
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          name: meta.name || data.user.email?.split('@')[0] || 'User',
+          email: data.user.email || email,
+          role: meta.role || 'student',
+          approval_status: meta.role === 'faculty' ? 'pending' : 'approved',
+        });
+      }
+
       return {};
     } catch (err) {
       console.error('Sign in exception:', err);
