@@ -27,17 +27,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchProfile = async (userId: string): Promise<User | null> => {
     try {
-      // Small delay to let trigger-created profile propagate
-      await new Promise(r => setTimeout(r, 500));
+      // Use maybeSingle() — returns null for 0 rows instead of throwing 406
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
+
       if (error) {
         console.error('Profile fetch error:', error.message);
         return null;
       }
+
+      // Profile not found — user exists in auth but has no profile row
+      if (!data) {
+        console.warn('No profile found for user:', userId);
+        return null;
+      }
+
       return data;
     } catch (err) {
       console.error('Profile fetch exception:', err);
@@ -53,7 +60,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (session?.user) {
         const profile = await fetchProfile(session.user.id);
         if (mounted) {
-          setUser(profile);
+          if (profile) {
+            setUser(profile);
+          } else {
+            // Stale session with no profile — sign out to clean up
+            console.warn('Stale session detected (no profile). Signing out.');
+            await supabase.auth.signOut();
+            setUser(null);
+          }
           setLoading(false);
         }
       } else {
@@ -61,8 +75,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (!mounted) return;
+
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       if (session?.user) {
         setTimeout(async () => {
           if (!mounted) return;
@@ -71,7 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(profile);
             setLoading(false);
           }
-        }, 0);
+        }, 100);
       } else {
         setUser(null);
         setLoading(false);
@@ -90,13 +111,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         console.error('Sign in error:', error.message, error.status);
         if (error.status === 500) {
-          return { error: 'Server error. Please check that email confirmation is disabled in Supabase Auth settings, or verify the account exists.' };
+          return { error: 'Server error. Please ensure "Confirm email" is disabled in Supabase → Auth → Providers → Email.' };
         }
         if (error.message.includes('Invalid login credentials')) {
           return { error: 'Invalid email or password.' };
         }
         if (error.message.includes('Email not confirmed')) {
-          return { error: 'Please confirm your email first. Check your inbox.' };
+          return { error: 'Email not confirmed. Ask admin to disable email confirmation in Supabase settings.' };
         }
         return { error: error.message };
       }
@@ -121,7 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         console.error('Sign up error:', error.message, error.status);
         if (error.status === 500) {
-          return { error: 'Server error. Email service may not be configured. Please ask admin to enable auto-confirm in Supabase Auth settings.' };
+          return { error: 'Server error. Email confirmation might be enabled without SMTP. Ask admin to disable "Confirm email" in Supabase → Auth → Providers → Email.' };
         }
         if (error.message.includes('already registered')) {
           return { error: 'An account with this email already exists. Try signing in.' };
@@ -130,13 +151,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
-        // If auto-confirm is ON, user gets a session immediately
-        // If auto-confirm is OFF, user.identities will be empty for existing unconfirmed
+        // Check for fake signup (user exists, auto-confirm off)
         if (data.user.identities && data.user.identities.length === 0) {
           return { error: 'An account with this email already exists. Try signing in.' };
         }
 
-        // Upsert profile (trigger may have already created it)
+        // The trigger handle_new_user should auto-create the profile.
+        // But let's also upsert to be safe.
         await supabase.from('profiles').upsert({
           id: data.user.id,
           name,
@@ -145,8 +166,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           approval_status: role === 'faculty' ? 'pending' : 'approved',
         });
 
-        // If we got a session (auto-confirm ON), we're logged in
         if (data.session) {
+          // Auto-confirm ON — user is logged in immediately
           return {};
         }
 
@@ -171,11 +192,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: 'This email is not authorized as admin.' };
     }
 
-    // Try sign in
+    // Try sign in first
     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (!signInError && signInData.session) {
-      // Signed in successfully — ensure profile is admin
+    if (!signInError && signInData?.session) {
+      // Signed in — ensure profile is admin
       await supabase.from('profiles').upsert({
         id: signInData.user.id,
         name: 'Admin',
@@ -189,8 +210,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (signInError) {
       console.error('Admin sign in error:', signInError.message, signInError.status);
 
-      // If invalid credentials, try creating the account
       if (signInError.message.includes('Invalid login credentials')) {
+        // Account doesn't exist — create it
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
@@ -198,14 +219,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
 
         if (signUpError) {
-          console.error('Admin sign up error:', signUpError.message);
           if (signUpError.message.includes('already registered')) {
             return { error: 'Invalid password for this admin account.' };
           }
           return { error: signUpError.message };
         }
 
-        if (signUpData.user) {
+        if (signUpData?.user) {
           await supabase.from('profiles').upsert({
             id: signUpData.user.id,
             name: 'Admin',
@@ -215,22 +235,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
         }
 
-        // If auto-confirm gave a session, we're done
-        if (signUpData.session) {
+        if (signUpData?.session) {
           return {};
         }
 
-        // Try sign in after signup (auto-confirm case)
+        // Try sign in after signup
         const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
         if (retryError) {
-          return { error: 'Account created but email confirmation may be required. Check Supabase Auth settings.' };
+          return { error: 'Account created. If email confirmation is enabled, please disable it in Supabase → Auth → Providers → Email, then try again.' };
         }
         return {};
       }
 
-      // 500 = server issue
       if (signInError.status === 500) {
-        return { error: 'Server error. The account may need to be created through the Supabase Dashboard or via the signup form.' };
+        return { error: 'Server error. Ensure "Confirm email" is OFF in Supabase → Auth → Providers → Email.' };
       }
 
       return { error: signInError.message };
