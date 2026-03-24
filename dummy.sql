@@ -84,9 +84,8 @@ DECLARE
   cat15 uuid := '30000000-0000-0000-0000-000000000015';
 BEGIN
   SELECT id INTO adm FROM auth.users WHERE email = 'adhithyakrishna00001@gmail.com';
-
-  -- Disable trigger so we create profiles manually
-  ALTER TABLE auth.users DISABLE TRIGGER on_auth_user_created;
+  -- Note: the handle_new_user trigger will auto-create profiles on INSERT.
+  -- Our ON CONFLICT DO UPDATE below will overwrite with correct data.
 
   -- ================================================================
   -- STUDENTS: auth.users
@@ -150,10 +149,8 @@ BEGIN
     (f10,'00000000-0000-0000-0000-000000000000','anju.sreedharan@mgits.ac.in',crypt('Faculty@1234',gen_salt('bf')),'2026-02-05 10:00:00+00','2026-02-05 10:00:00+00','2026-02-05 10:00:00+00','{"provider":"email","providers":["email"]}','{"name":"Prof. Anju Sreedharan","role":"faculty"}',false,'authenticated','authenticated')
   ON CONFLICT (email) DO NOTHING;
 
-  ALTER TABLE auth.users ENABLE TRIGGER on_auth_user_created;
-
   -- ================================================================
-  -- STUDENT profiles
+  -- STUDENT profiles  (ON CONFLICT updates what the trigger created)
   -- ================================================================
   INSERT INTO public.profiles (id,name,email,role,approval_status,created_at) VALUES
     (s01,'Aarav Sharma','24cy101@mgits.ac.in','student','approved','2024-06-10 08:00:00+00'),
