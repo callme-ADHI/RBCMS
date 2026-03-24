@@ -127,6 +127,29 @@ BEGIN
         email           = 'asharaj@mgits.ac.in',
         name            = COALESCE(NULLIF(public.profiles.name, ''), 'Asha Raj');
 
+  -- ── Identity records (required for password login to work) ────
+  INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+  VALUES (
+    gen_random_uuid(),
+    uid1,
+    jsonb_build_object('sub', uid1::text, 'email', 'adhithyakrishna00001@gmail.com', 'email_verified', true, 'phone_verified', false),
+    'email',
+    uid1::text,
+    now(), now(), now()
+  )
+  ON CONFLICT (provider, provider_id) DO NOTHING;
+
+  INSERT INTO auth.identities (id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+  VALUES (
+    gen_random_uuid(),
+    uid2,
+    jsonb_build_object('sub', uid2::text, 'email', 'asharaj@mgits.ac.in', 'email_verified', true, 'phone_verified', false),
+    'email',
+    uid2::text,
+    now(), now(), now()
+  )
+  ON CONFLICT (provider, provider_id) DO NOTHING;
+
 END $$;
 
 -- =============================================================

@@ -134,6 +134,52 @@ BEGIN
   ON CONFLICT (id) DO NOTHING;
 
   -- ================================================================
+  -- STUDENT auth.identities (required for password login)
+  -- ================================================================
+  INSERT INTO auth.identities (id,user_id,identity_data,provider,provider_id,last_sign_in_at,created_at,updated_at) VALUES
+    (gen_random_uuid(),s01,'{{"sub":"' || s01 || '","email":"24cy101@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s01::text,'2024-06-10 08:00:00+00','2024-06-10 08:00:00+00','2024-06-10 08:00:00+00'),
+    (gen_random_uuid(),s02,'{{"sub":"' || s02 || '","email":"24cy102@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s02::text,'2024-06-10 08:05:00+00','2024-06-10 08:05:00+00','2024-06-10 08:05:00+00'),
+    (gen_random_uuid(),s03,'{{"sub":"' || s03 || '","email":"24cy103@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s03::text,'2024-06-10 08:10:00+00','2024-06-10 08:10:00+00','2024-06-10 08:10:00+00'),
+    (gen_random_uuid(),s04,'{{"sub":"' || s04 || '","email":"24cy104@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s04::text,'2024-06-10 08:15:00+00','2024-06-10 08:15:00+00','2024-06-10 08:15:00+00'),
+    (gen_random_uuid(),s05,'{{"sub":"' || s05 || '","email":"24cy105@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s05::text,'2024-06-10 08:20:00+00','2024-06-10 08:20:00+00','2024-06-10 08:20:00+00'),
+    (gen_random_uuid(),s06,'{{"sub":"' || s06 || '","email":"24cy106@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s06::text,'2024-06-10 08:25:00+00','2024-06-10 08:25:00+00','2024-06-10 08:25:00+00'),
+    (gen_random_uuid(),s07,'{{"sub":"' || s07 || '","email":"24cy107@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s07::text,'2024-06-10 08:30:00+00','2024-06-10 08:30:00+00','2024-06-10 08:30:00+00'),
+    (gen_random_uuid(),s08,'{{"sub":"' || s08 || '","email":"24cy108@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s08::text,'2024-06-10 08:35:00+00','2024-06-10 08:35:00+00','2024-06-10 08:35:00+00'),
+    (gen_random_uuid(),s09,'{{"sub":"' || s09 || '","email":"24cy109@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s09::text,'2024-06-10 08:40:00+00','2024-06-10 08:40:00+00','2024-06-10 08:40:00+00'),
+    (gen_random_uuid(),s10,'{{"sub":"' || s10 || '","email":"24cy110@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s10::text,'2024-06-10 08:45:00+00','2024-06-10 08:45:00+00','2024-06-10 08:45:00+00'),
+    (gen_random_uuid(),s11,'{{"sub":"' || s11 || '","email":"24cy111@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s11::text,'2024-06-10 08:50:00+00','2024-06-10 08:50:00+00','2024-06-10 08:50:00+00'),
+    (gen_random_uuid(),s12,'{{"sub":"' || s12 || '","email":"24cy112@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s12::text,'2024-06-10 08:55:00+00','2024-06-10 08:55:00+00','2024-06-10 08:55:00+00'),
+    (gen_random_uuid(),s13,'{{"sub":"' || s13 || '","email":"24cy113@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s13::text,'2024-06-10 09:00:00+00','2024-06-10 09:00:00+00','2024-06-10 09:00:00+00'),
+    (gen_random_uuid(),s14,'{{"sub":"' || s14 || '","email":"24cy114@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s14::text,'2024-06-10 09:05:00+00','2024-06-10 09:05:00+00','2024-06-10 09:05:00+00'),
+    (gen_random_uuid(),s15,'{{"sub":"' || s15 || '","email":"24cy115@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s15::text,'2024-06-10 09:10:00+00','2024-06-10 09:10:00+00','2024-06-10 09:10:00+00'),
+    (gen_random_uuid(),s16,'{{"sub":"' || s16 || '","email":"24cy116@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s16::text,'2024-06-10 09:15:00+00','2024-06-10 09:15:00+00','2024-06-10 09:15:00+00'),
+    (gen_random_uuid(),s17,'{{"sub":"' || s17 || '","email":"24cy117@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s17::text,'2024-06-10 09:20:00+00','2024-06-10 09:20:00+00','2024-06-10 09:20:00+00'),
+    (gen_random_uuid(),s18,'{{"sub":"' || s18 || '","email":"24cy118@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s18::text,'2024-06-10 09:25:00+00','2024-06-10 09:25:00+00','2024-06-10 09:25:00+00'),
+    (gen_random_uuid(),s19,'{{"sub":"' || s19 || '","email":"24cy119@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s19::text,'2024-06-10 09:30:00+00','2024-06-10 09:30:00+00','2024-06-10 09:30:00+00'),
+    (gen_random_uuid(),s20,'{{"sub":"' || s20 || '","email":"24cy120@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s20::text,'2024-06-10 09:35:00+00','2024-06-10 09:35:00+00','2024-06-10 09:35:00+00'),
+    (gen_random_uuid(),s21,'{{"sub":"' || s21 || '","email":"23cs201@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s21::text,'2023-06-12 08:00:00+00','2023-06-12 08:00:00+00','2023-06-12 08:00:00+00'),
+    (gen_random_uuid(),s22,'{{"sub":"' || s22 || '","email":"23cs202@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s22::text,'2023-06-12 08:10:00+00','2023-06-12 08:10:00+00','2023-06-12 08:10:00+00'),
+    (gen_random_uuid(),s23,'{{"sub":"' || s23 || '","email":"23cs203@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s23::text,'2023-06-12 08:20:00+00','2023-06-12 08:20:00+00','2023-06-12 08:20:00+00'),
+    (gen_random_uuid(),s24,'{{"sub":"' || s24 || '","email":"23cs204@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s24::text,'2023-06-12 08:30:00+00','2023-06-12 08:30:00+00','2023-06-12 08:30:00+00'),
+    (gen_random_uuid(),s25,'{{"sub":"' || s25 || '","email":"23cs205@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s25::text,'2023-06-12 08:40:00+00','2023-06-12 08:40:00+00','2023-06-12 08:40:00+00'),
+    (gen_random_uuid(),s26,'{{"sub":"' || s26 || '","email":"23cs206@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s26::text,'2023-06-12 08:50:00+00','2023-06-12 08:50:00+00','2023-06-12 08:50:00+00'),
+    (gen_random_uuid(),s27,'{{"sub":"' || s27 || '","email":"23cs207@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s27::text,'2023-06-12 09:00:00+00','2023-06-12 09:00:00+00','2023-06-12 09:00:00+00'),
+    (gen_random_uuid(),s28,'{{"sub":"' || s28 || '","email":"23cs208@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s28::text,'2023-06-12 09:10:00+00','2023-06-12 09:10:00+00','2023-06-12 09:10:00+00'),
+    (gen_random_uuid(),s29,'{{"sub":"' || s29 || '","email":"23cs209@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s29::text,'2023-06-12 09:20:00+00','2023-06-12 09:20:00+00','2023-06-12 09:20:00+00'),
+    (gen_random_uuid(),s30,'{{"sub":"' || s30 || '","email":"23cs210@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s30::text,'2023-06-12 09:30:00+00','2023-06-12 09:30:00+00','2023-06-12 09:30:00+00'),
+    (gen_random_uuid(),s31,'{{"sub":"' || s31 || '","email":"22ec301@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s31::text,'2022-06-15 08:00:00+00','2022-06-15 08:00:00+00','2022-06-15 08:00:00+00'),
+    (gen_random_uuid(),s32,'{{"sub":"' || s32 || '","email":"22ec302@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s32::text,'2022-06-15 08:10:00+00','2022-06-15 08:10:00+00','2022-06-15 08:10:00+00'),
+    (gen_random_uuid(),s33,'{{"sub":"' || s33 || '","email":"22ec303@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s33::text,'2022-06-15 08:20:00+00','2022-06-15 08:20:00+00','2022-06-15 08:20:00+00'),
+    (gen_random_uuid(),s34,'{{"sub":"' || s34 || '","email":"22ec304@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s34::text,'2022-06-15 08:30:00+00','2022-06-15 08:30:00+00','2022-06-15 08:30:00+00'),
+    (gen_random_uuid(),s35,'{{"sub":"' || s35 || '","email":"22ec305@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s35::text,'2022-06-15 08:40:00+00','2022-06-15 08:40:00+00','2022-06-15 08:40:00+00'),
+    (gen_random_uuid(),s36,'{{"sub":"' || s36 || '","email":"22ec306@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s36::text,'2022-06-15 08:50:00+00','2022-06-15 08:50:00+00','2022-06-15 08:50:00+00'),
+    (gen_random_uuid(),s37,'{{"sub":"' || s37 || '","email":"22ec307@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s37::text,'2022-06-15 09:00:00+00','2022-06-15 09:00:00+00','2022-06-15 09:00:00+00'),
+    (gen_random_uuid(),s38,'{{"sub":"' || s38 || '","email":"22ec308@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s38::text,'2022-06-15 09:10:00+00','2022-06-15 09:10:00+00','2022-06-15 09:10:00+00'),
+    (gen_random_uuid(),s39,'{{"sub":"' || s39 || '","email":"22ec309@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s39::text,'2022-06-15 09:20:00+00','2022-06-15 09:20:00+00','2022-06-15 09:20:00+00'),
+    (gen_random_uuid(),s40,'{{"sub":"' || s40 || '","email":"22ec310@mgits.ac.in","email_verified":true,"phone_verified":false}','email',s40::text,'2022-06-15 09:30:00+00','2022-06-15 09:30:00+00','2022-06-15 09:30:00+00')
+  ON CONFLICT (provider,provider_id) DO NOTHING;
+
+  -- ================================================================
   -- FACULTY: auth.users
   -- ================================================================
   INSERT INTO auth.users (id,instance_id,email,encrypted_password,email_confirmed_at,created_at,updated_at,raw_app_meta_data,raw_user_meta_data,is_super_admin,role,aud) VALUES
@@ -148,6 +194,22 @@ BEGIN
     (f09,'00000000-0000-0000-0000-000000000000','jijo.abraham@mgits.ac.in',crypt('Faculty@1234',gen_salt('bf')),'2026-02-01 10:00:00+00','2026-02-01 10:00:00+00','2026-02-01 10:00:00+00','{"provider":"email","providers":["email"]}','{"name":"Dr. Jijo Abraham","role":"faculty"}',false,'authenticated','authenticated'),
     (f10,'00000000-0000-0000-0000-000000000000','anju.sreedharan@mgits.ac.in',crypt('Faculty@1234',gen_salt('bf')),'2026-02-05 10:00:00+00','2026-02-05 10:00:00+00','2026-02-05 10:00:00+00','{"provider":"email","providers":["email"]}','{"name":"Prof. Anju Sreedharan","role":"faculty"}',false,'authenticated','authenticated')
   ON CONFLICT (id) DO NOTHING;
+
+  -- ================================================================
+  -- FACULTY auth.identities (required for password login)
+  -- ================================================================
+  INSERT INTO auth.identities (id,user_id,identity_data,provider,provider_id,last_sign_in_at,created_at,updated_at) VALUES
+    (gen_random_uuid(),f01,'{{"sub":"' || f01 || '","email":"rajesh.kumar@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f01::text,'2021-07-01 09:00:00+00','2021-07-01 09:00:00+00','2021-07-01 09:00:00+00'),
+    (gen_random_uuid(),f02,'{{"sub":"' || f02 || '","email":"meena.babu@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f02::text,'2021-07-01 09:10:00+00','2021-07-01 09:10:00+00','2021-07-01 09:10:00+00'),
+    (gen_random_uuid(),f03,'{{"sub":"' || f03 || '","email":"suresh.nair@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f03::text,'2021-07-01 09:20:00+00','2021-07-01 09:20:00+00','2021-07-01 09:20:00+00'),
+    (gen_random_uuid(),f04,'{{"sub":"' || f04 || '","email":"latha.krishnan@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f04::text,'2021-07-01 09:30:00+00','2021-07-01 09:30:00+00','2021-07-01 09:30:00+00'),
+    (gen_random_uuid(),f05,'{{"sub":"' || f05 || '","email":"anil.varghese@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f05::text,'2021-07-01 09:40:00+00','2021-07-01 09:40:00+00','2021-07-01 09:40:00+00'),
+    (gen_random_uuid(),f06,'{{"sub":"' || f06 || '","email":"bindu.thomas@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f06::text,'2026-01-10 10:00:00+00','2026-01-10 10:00:00+00','2026-01-10 10:00:00+00'),
+    (gen_random_uuid(),f07,'{{"sub":"' || f07 || '","email":"ravi.prakash@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f07::text,'2026-01-12 10:00:00+00','2026-01-12 10:00:00+00','2026-01-12 10:00:00+00'),
+    (gen_random_uuid(),f08,'{{"sub":"' || f08 || '","email":"seema.nambiar@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f08::text,'2026-01-15 10:00:00+00','2026-01-15 10:00:00+00','2026-01-15 10:00:00+00'),
+    (gen_random_uuid(),f09,'{{"sub":"' || f09 || '","email":"jijo.abraham@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f09::text,'2026-02-01 10:00:00+00','2026-02-01 10:00:00+00','2026-02-01 10:00:00+00'),
+    (gen_random_uuid(),f10,'{{"sub":"' || f10 || '","email":"anju.sreedharan@mgits.ac.in","email_verified":true,"phone_verified":false}','email',f10::text,'2026-02-05 10:00:00+00','2026-02-05 10:00:00+00','2026-02-05 10:00:00+00')
+  ON CONFLICT (provider,provider_id) DO NOTHING;
 
   -- ================================================================
   -- STUDENT profiles  (ON CONFLICT updates what the trigger created)

@@ -174,7 +174,7 @@ const AllComplaints = () => {
   };
 
   return (
-    <PageWrapper className="container py-6 space-y-0">
+    <PageWrapper className="container py-6 space-y-0 relative">
       <ParallaxHeader>
         <div className="pt-4 space-y-4">
           <motion.h1
