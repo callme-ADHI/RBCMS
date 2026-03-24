@@ -167,15 +167,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return { error: 'Server error. Email confirmation might be enabled without SMTP. Ask admin to disable "Confirm email" in Supabase → Auth → Providers → Email.' };
         }
         if (error.message.includes('already registered')) {
-          return { error: 'An account with this email already exists. Try signing in.' };
+          // Account exists — try to sign in instead
+          const signInResult = await signIn(email, password);
+          if (!signInResult.error) {
+            // Update profile with the new name/role
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            if (currentUser) {
+              await supabase.from('profiles').upsert({
+                id: currentUser.id, name, email, role,
+                approval_status: role === 'faculty' ? 'pending' : 'approved',
+              });
+            }
+            return {}; // signed in successfully
+          }
+          return { error: 'An account with this email already exists. Try signing in with your password.' };
         }
         return { error: error.message };
       }
 
       if (data.user) {
-        // Check for fake signup (user exists, auto-confirm off)
+        // Check for ghost signup (user exists but unconfirmed, auto-confirm was off)
         if (data.user.identities && data.user.identities.length === 0) {
-          return { error: 'An account with this email already exists. Try signing in.' };
+          // Try sign in — might work if auto-confirm was turned on now
+          const signInResult = await signIn(email, password);
+          if (!signInResult.error) {
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            if (currentUser) {
+              await supabase.from('profiles').upsert({
+                id: currentUser.id, name, email, role,
+                approval_status: role === 'faculty' ? 'pending' : 'approved',
+              });
+            }
+            return {};
+          }
+          return { error: 'An account with this email already exists but may need the correct password. Try signing in.' };
         }
 
         // The trigger handle_new_user should auto-create the profile.
