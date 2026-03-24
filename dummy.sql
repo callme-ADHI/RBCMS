@@ -131,7 +131,7 @@ BEGIN
     (s38,'00000000-0000-0000-0000-000000000000','22ec308@mgits.ac.in',crypt('Student@1234',gen_salt('bf')),'2022-06-15 09:10:00+00','2022-06-15 09:10:00+00','2022-06-15 09:10:00+00','{"provider":"email","providers":["email"]}','{"name":"Deepthi John","role":"student"}',false,'authenticated','authenticated'),
     (s39,'00000000-0000-0000-0000-000000000000','22ec309@mgits.ac.in',crypt('Student@1234',gen_salt('bf')),'2022-06-15 09:20:00+00','2022-06-15 09:20:00+00','2022-06-15 09:20:00+00','{"provider":"email","providers":["email"]}','{"name":"Naveen Pillai","role":"student"}',false,'authenticated','authenticated'),
     (s40,'00000000-0000-0000-0000-000000000000','22ec310@mgits.ac.in',crypt('Student@1234',gen_salt('bf')),'2022-06-15 09:30:00+00','2022-06-15 09:30:00+00','2022-06-15 09:30:00+00','{"provider":"email","providers":["email"]}','{"name":"Sandra Jose","role":"student"}',false,'authenticated','authenticated')
-  ON CONFLICT (email) DO NOTHING;
+  ON CONFLICT (id) DO NOTHING;
 
   -- ================================================================
   -- FACULTY: auth.users
@@ -147,7 +147,7 @@ BEGIN
     (f08,'00000000-0000-0000-0000-000000000000','seema.nambiar@mgits.ac.in',crypt('Faculty@1234',gen_salt('bf')),'2026-01-15 10:00:00+00','2026-01-15 10:00:00+00','2026-01-15 10:00:00+00','{"provider":"email","providers":["email"]}','{"name":"Prof. Seema Nambiar","role":"faculty"}',false,'authenticated','authenticated'),
     (f09,'00000000-0000-0000-0000-000000000000','jijo.abraham@mgits.ac.in',crypt('Faculty@1234',gen_salt('bf')),'2026-02-01 10:00:00+00','2026-02-01 10:00:00+00','2026-02-01 10:00:00+00','{"provider":"email","providers":["email"]}','{"name":"Dr. Jijo Abraham","role":"faculty"}',false,'authenticated','authenticated'),
     (f10,'00000000-0000-0000-0000-000000000000','anju.sreedharan@mgits.ac.in',crypt('Faculty@1234',gen_salt('bf')),'2026-02-05 10:00:00+00','2026-02-05 10:00:00+00','2026-02-05 10:00:00+00','{"provider":"email","providers":["email"]}','{"name":"Prof. Anju Sreedharan","role":"faculty"}',false,'authenticated','authenticated')
-  ON CONFLICT (email) DO NOTHING;
+  ON CONFLICT (id) DO NOTHING;
 
   -- ================================================================
   -- STUDENT profiles  (ON CONFLICT updates what the trigger created)
