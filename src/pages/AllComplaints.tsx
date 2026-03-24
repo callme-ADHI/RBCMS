@@ -18,30 +18,41 @@ const ScrollRevealCard = ({
   index: number;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const isInView = useInView(ref, { once: true, margin: '-60px' });
+
+  // Column position in the 3-column grid
+  const col = index % 3;
+
+  // Left card: slides from left; Right card: slides from right; Center: rises from below
+  const initialState =
+    col === 0
+      ? { opacity: 0, x: -80, y: 20, scale: 0.9, rotateY: 6 }
+      : col === 2
+        ? { opacity: 0, x: 80, y: 20, scale: 0.9, rotateY: -6 }
+        : { opacity: 0, x: 0, y: 70, scale: 0.88, rotateX: 8 };
+
+  const animateState = isInView
+    ? { opacity: 1, x: 0, y: 0, scale: 1, rotateX: 0, rotateY: 0 }
+    : initialState;
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 60, scale: 0.92, rotateX: 8 }}
-      animate={
-        isInView
-          ? { opacity: 1, y: 0, scale: 1, rotateX: 0 }
-          : { opacity: 0, y: 60, scale: 0.92, rotateX: 8 }
-      }
+      initial={initialState}
+      animate={animateState}
       transition={{
-        duration: 0.5,
-        delay: (index % 3) * 0.08,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        duration: 0.6,
+        delay: col * 0.1,
+        ease: [0.16, 1, 0.3, 1], // smooth expo-out
       }}
       whileHover={{
-        y: -6,
-        scale: 1.02,
-        boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
-        transition: { duration: 0.25 },
+        y: -8,
+        scale: 1.025,
+        boxShadow: '0 24px 48px rgba(0,0,0,0.14)',
+        transition: { duration: 0.25, ease: 'easeOut' },
       }}
-      style={{ perspective: 800, transformStyle: 'preserve-3d' }}
-      className="relative"
+      style={{ perspective: 900, transformStyle: 'preserve-3d' }}
+      className="relative will-change-transform"
     >
       {children}
     </motion.div>
